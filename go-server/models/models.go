@@ -1,9 +1,41 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"fmt"
+	"log"
 
-type ToDoList struct {
-	ID     primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	Task   string             `json:"task,omitempty"`
-	Status bool               `json:"status,omitempty"`
+	"github.com/google/uuid"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+)
+
+type Task struct {
+	gorm.Model
+	ID          string `gorm:"type:uuid;" json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Completed   bool   `json:"completed"`
+	OrderIndex  int    `json:"orderIndex"`
+}
+
+func (task *Task) BeforeCreate(tx *gorm.DB) (err error) {
+	task.ID = uuid.New().String()
+	return
+}
+
+var Database *gorm.DB
+
+func init() {
+	var err error
+	Database, err = gorm.Open(sqlite.Open("database.db"), &gorm.Config{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = Database.AutoMigrate(&Task{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Connected to SQLite and table created!")
 }
