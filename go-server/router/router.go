@@ -19,6 +19,7 @@ func Router() *mux.Router {
 	router.HandleFunc("/api/undoTask/{id}", controllers.UndoTask).Methods("PUT", "OPTIONS")
 	router.HandleFunc("/api/task/{id}", controllers.DeleteTask).Methods("DELETE", "OPTIONS")
 	router.HandleFunc("/api/task/all", controllers.DeleteAllTask).Methods("DELETE", "OPTIONS")
+	// TODO: implement PUT /api/task/{id}/move with body {task: Task, newIndex: number} to move task position
 
 	// Static file server
 	staticDir := "../client/dist"
